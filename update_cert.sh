@@ -22,11 +22,11 @@ function import_certificate() {
 
 	# TODO: ensure none contain a quote
 	# Replace newlines with \n so it can be put in JSON:
-	# https://superuser.com/questions/955935/how-can-i-replace-a-newline-with-its-escape-sequence 
+	# https://superuser.com/questions/955935/how-can-i-replace-a-newline-with-its-escape-sequence
 	CERTIFICATE="$(cat "$CERTIFICATE_FILE" | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n/g')"
 	KEY="$(cat "$KEY_FILE" | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n/g')"
 
-	# Basic validation 
+	# Basic validation
 	[[ -z "$CERTIFICATE" ]] && echo "Certificate file was empty: $CERTIFICATE_FILE" && return 1
 	[[ -z "$KEY" ]] && echo "Key file was empty: $KEY_FILE" && return 1
 
@@ -66,7 +66,7 @@ function patch_ix_nginx_for_ec() {
 
 	[[ ! "$VERSION" < "FreeNAS-11.3" ]] && return
 
-	# Ignore exit status of 1 due to EOF 
+	# Ignore exit status of 1 due to EOF
 	read -r -d '' PATCH <<- 'EOF' || true
 		216c216
 		< 		${OPENSSL} rsa -in "${httpdkey}" -check -noout > /dev/null 2>&1
@@ -83,7 +83,7 @@ function patch_ix_nginx_for_ec() {
 	EOF
 
 	# Check if the patch is already applied
-	patch -RCtfs "$SCRIPT" >/dev/null <<< "$PATCH" && echo "$SCRIPT already patched" && return 
+	patch -RCtfs "$SCRIPT" >/dev/null <<< "$PATCH" && echo "$SCRIPT already patched" && return
 
 	# Verify we can cleanly apply
 	#patch -NCtnf /etc/ix.rc.d/ix-nginx <<< "$PATCH"
@@ -122,7 +122,7 @@ PREFIX="/mnt/theabyss/iocage/jails/nginx/root/home/www/.caddy/acme/acme-v02.api.
 needs_update "$CERTIFICATE_OLD" "$PREFIX.crt" || exit
 
 CERTIFICATE_NEW="${CERTIFICATE_OLD}_$(date "+%Y%m%d")"
-import_certificate "$CERTIFICATE_NEW" "$PREFIX.crt" "$PREFIX.key" 
+import_certificate "$CERTIFICATE_NEW" "$PREFIX.crt" "$PREFIX.key"
 update_certificate "$CERTIFICATE_OLD" "$CERTIFICATE_NEW"
 restart_services
 
