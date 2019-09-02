@@ -8,7 +8,7 @@ function needs_update() {
 	[[ "$#" -ne 2 ]] && echo "usage: ${FUNCNAME[0]}: <name> <certificate_file>" && return 1
 
 	local NEW="$(cat "$CERTIFICATE_FILE")"
-	local OLD="$(sqlite3 /data/freenas-v1.db "SELECT cert_certificate FROM system_certificate")"
+	local OLD="$(sqlite3 /data/freenas-v1.db "SELECT cert_certificate FROM system_certificate WHERE cert_name = '$NAME'")"
 	
 	[[ "$NEW" != "$OLD" ]]
 }
