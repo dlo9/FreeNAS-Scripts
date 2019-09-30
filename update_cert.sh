@@ -132,3 +132,4 @@ update_certificate "$CERTIFICATE_OLD" "$CERTIFICATE_NEW"
 restart_services
 
 echo "Successfully updated certificate: $CERTIFICATE_OLD"
+echo "Certificate expiration date: $(openssl x509 -enddate -noout -in "$PREFIX.crt" | sed 's/notAfter=//')"
