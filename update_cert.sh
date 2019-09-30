@@ -10,7 +10,12 @@ function needs_update() {
 	local NEW="$(cat "$CERTIFICATE_FILE")"
 	local OLD="$(sqlite3 /data/freenas-v1.db "SELECT cert_certificate FROM system_certificate WHERE cert_name = '$NAME'")"
 	
-	[[ "$NEW" != "$OLD" ]]
+	# Update if the certificate is out of date or if the web service is not patched (which occurs on reboot since /etc is a tmpfs)
+	if [ "$NEW" != "$OLD" ] || ! grep -q "ec -in" /etc/ix.rc.d/ix-nginx; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 # args: <name> <certificate_file> <key_file>
